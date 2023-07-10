@@ -1,4 +1,4 @@
-# Lesson 4
+# Lesson 3
 
 1. The lesson explains the use of libraries.
 2. Essentially, libraries are just solidity code written for a specific purpose that can be imported and used for further development.
