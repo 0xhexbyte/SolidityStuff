@@ -19,10 +19,10 @@ in an example as such we defined the getConversionRate() function in a library a
 
 `
 function getConversionRate(uint256 ethAmount) internal view returns(uint256){` <br />
-        `uint256 ethPrice = getPrice();` \n
-        `uint256 ethAmountInUsd = (ethPrice * ethAmount) / 1e18;`\n
-        `return ethAmountInUsd;`\n
-    `}`\n
+        `uint256 ethPrice = getPrice();` <br />
+        `uint256 ethAmountInUsd = (ethPrice * ethAmount) / 1e18;` <br />
+        `return ethAmountInUsd;` <br />
+    `}` <br />
 
 what we need to understand is when we type "msg.value" over there, it gets passed as the first arguement of the function `getConversionRate` and since it is `uint256`, it can access that function.
 
