@@ -8,12 +8,14 @@
 5. If not so, library must be deployed and linked before the contract is deployed.
 
 => Importing a library and then typing something like this:
-    `using PriceConverter for uint256;`
+
+    using PriceConverter for uint256;
+
 where `PriceConverter` is the library in the `.sol` file, this means that all `uint256` values can access the functions inside `PriceConverter` library.
 
 => Also:
 
-  `require(msg.value.getConversionRate() >= minimumUsd, "not enough eth");`
+    require(msg.value.getConversionRate() >= minimumUsd, "not enough eth");
 
 in an example as such we defined the getConversionRate() function in a library as such:
 
@@ -27,12 +29,12 @@ what we need to understand is when we type "msg.value" over there, it gets passe
 
 Lets say there was a second param for our function such as :
 
-`function getConversionRate(uint256 ethAmount, uint256 secondParam) internal view returns(uint256){}`
+    function getConversionRate(uint256 ethAmount, uint256 secondParam) internal view returns(uint256){}
 
 Then in this case, the value passed in the brackets where it gets implemented will be the second value, for example:
-`
-        require(msg.value.getConversionRate(secondParam) >= minimumUsd, "not enough eth");
-`
+
+    require(msg.value.getConversionRate(secondParam) >= minimumUsd, "not enough eth");
+
 so the first value is picked from the value before the `dot` operator and second one gets picked from the value being passed as an arguement.
 
 ## SafeMath
