@@ -18,11 +18,11 @@ where `PriceConverter` is the library in the `.sol` file, this means that all `u
 in an example as such we defined the getConversionRate() function in a library as such:
 
 `
-function getConversionRate(uint256 ethAmount) internal view returns(uint256){
-        uint256 ethPrice = getPrice();
-        uint256 ethAmountInUsd = (ethPrice * ethAmount) / 1e18;
-        return ethAmountInUsd;
-    }
+function getConversionRate(uint256 ethAmount) internal view returns(uint256){ \n
+        uint256 ethPrice = getPrice(); \n
+        uint256 ethAmountInUsd = (ethPrice * ethAmount) / 1e18;\n
+        return ethAmountInUsd;\n
+    }\n
 `
 what we need to understand is when we type "msg.value" over there, it gets passed as the first arguement of the function `getConversionRate` and since it is `uint256`, it can access that function.
 
