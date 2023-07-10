@@ -43,9 +43,19 @@ so the first value is picked from the value before the `dot` operator and second
 * The `unchecked` keyword is used to bypass any such checks, the sole aim to do that is to make the contract gas efficient.
 * We should be using `unchecked` only when we're sure that the mathematical operation will never lead to either of the conditions i.e. overflow / underflow.
 
-However, from solidity code above 0.8.0, all arithmetic operations revert on over- and underflow by default, thus making the use of these libraries unnecessary.
+** However, from solidity code above 0.8.0, all arithmetic operations revert on over- and underflow by default, thus making the use of these libraries unnecessary.
 
 Just some extra reading (cause it feels professional):
 https://ethereum.stackexchange.com/questions/113221/what-is-the-purpose-of-unchecked-in-solidity
 
 ## For Loop
+A For Loop is used to repeat through a specific code for a specified number of times. An example will be:
+
+        for(/* starting index, ending index, step amount*/)
+So now to put it in an example:
+
+            for(uint256 funderIndex = 0; funderIndex < funders.length; funderIndex++){
+            /* Anything that goes within this code block will continue to get executed until the condition in the for loop stays true.*/
+            }
+
+## Resetting an Array
