@@ -59,3 +59,70 @@ So now to put it in an example:
             }
 
 ## Resetting an Array
+    funders = new address[](0);
+Earlier we used `new` keyword to initiate a contract, whereas now it is being used to set the `funders` array to a brand new `address array`.
+
+Different ways to send ETH to a contract:
+1. Trasnfer
+2. Send
+3. Call
+
+        msg.sender.transfer(address(this).balance);
+The only thing we need to do here is to change the address (typecast it) to payable so it can receive ether. So the new code line will be:
+
+1. transfer():
+
+        payable(msg.sender).transfer(address(this).balance);
+In Solidity, we can only send money to payable addresses. 
+The transfer function is capped at 2300 gas, if more gas is used then it throws an error.
+
+2. send():
+
+        payable(msg.sender).send(address(this).balance);
+The send function is also capped at 2300 gas, if more gas is consumed then it returns a boolean. In this case, we wouldn't be using the above code, but:
+
+        bool sendSuccess = payable(msg.sender).transfer(address(this).balance);
+        require(sendSuccess, "Send failed");
+This way, even if it fails we will be able to revert the tx. We should not here that the `transfer` function automatically fails upon receiving an error.
+
+3. call():
+
+        (bool callSuccess, bytes memory dataReturned) = payable(msg.sender).call{value: address(this).balance}("");
+The call function is very powerful. It is a low-level command and can be used to call any function in all of Ethereum without an ABI.
+* Call function returns 2 values, a boolean and a bytes object.
+* The empty quotes at last is the placeholder for a function to call, if any and any data returned from that call gets stored in the dataReturned variable.
+* Since the bytes object is an array, data needs to be returned to the memory.
+* Also, since we are not calling any function we can leave the code as such:
+
+        (bool callSuccess, ) = payable(msg.sender).call{value: address(this).balance}("");
+        require(callSuccess, "call failed");
+
+
+## Constructor
+
+If we look carefully at the code piece above, anyone can call the `withdraw()` function and withdraw the funds, which should only be accessible to the owner of the contract, this is where we use a constructor.
+
+A constructor is a keyword in Solidity and can be simply defined as:
+
+        constructor() {
+        
+        }
+This constructor, gets called in the exact same transaction which is used to deploy the contract.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
