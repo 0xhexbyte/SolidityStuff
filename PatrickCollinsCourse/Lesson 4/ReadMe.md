@@ -105,9 +105,35 @@ If we look carefully at the code piece above, anyone can call the `withdraw()` f
 A constructor is a keyword in Solidity and can be simply defined as:
 
         constructor() {
-        
+            owner = msg.sender;
         }
-This constructor, gets called in the exact same transaction which is used to deploy the contract.
+This constructor gets called in the exact same transaction which is used to deploy the contract. Now, we can simply put a condition such as below to make sure only the owner calls the `withdraw()` function:
+
+        function withdraw() public {
+        require(msg.sender == owner, "Must be owner");
+        for(uint256 funderIndex = 0; funderIndex < funders.length; funderIndex++)
+        {
+            address funder = funders[funderIndex];
+            addressToAmountFunded[funder] = 0;
+        }
+    }
+
+## Modifiers
+
+Let's say in the above example, we intend to set that permission to multiple functions so that will be lots of copy-pasting. For situations like this, we have `modifiers`.
+
+Modifier allows us to declare a keyword whose definition can be defined by us and then it can be added to all the other functions:
+
+        modifier onlyOwner() {
+            require(msg.sender == Owner, "Sender is not owner");
+            _;
+        }
+So, now the keyword `onlyOwner` can be added to the function declaration as follows:
+
+        function withdraw() public onlyOwner {}
+The `_;` in the modifier means to carry forward with the function after executing the code inside the modifier.
+
+
 
 
 
