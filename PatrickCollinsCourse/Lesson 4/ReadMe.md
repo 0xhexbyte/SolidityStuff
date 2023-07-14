@@ -131,7 +131,40 @@ Modifier allows us to declare a keyword whose definition can be defined by us an
 So, now the keyword `onlyOwner` can be added to the function declaration as follows:
 
         function withdraw() public onlyOwner {}
-The `_;` in the modifier means to carry forward with the function after executing the code inside the modifier.
+The `_;` in the modifier means to carry forward with the function after executing the code inside the modifier. If this underscore is above the `require` function then it will first continue on with the code first and then check the condition that follows.
+
+
+## Advanced Solidity Immutable & Constants
+If we have variables that get set one time in our contract and never get changed, we can use some tools to make them more gas efficient.
+
+constant:
+When we add a constant keyword, the variable does not take storage spot and gets easier to read and thus reducing gas consumed.
+
+            uint256 public constant minimumUsd = 5e18;
+* Usually we have a common naming convention for `constant` variables and that is all caps. For example, the above line can be re-written as:
+
+            uint256 public constant MINIMUM_USD = 5e18;
+
+Another variable we only set one time is our `owner` variable. Variables that are set one time and outside of the line where they are declared can be marked as `immutable`. A common way to denote these is to have a leading `i_` before the variable name. For example:
+
+        address public immutable i_owner;
+        constructor(){
+        i_owner = msg.sender;
+    }
+
+The reason that these keywords save gas is because instead of storing them in the storage slots, we save them directly in the bytecode of the contract.
+
+## Error
+With Solidity 0.8 we can define custom errors and save gas with require statements.
+
+        error NotOwner();
+So the onlyOwner modifier becomes:
+
+        modifier onlyOwner() {
+        if(msg.sender != i_owner) {revert NotOwner();}
+        _;
+        }
+We can use the `revert()` function whenever and wherever it is required to revert the contract.
 
 
 
@@ -149,6 +182,4 @@ The `_;` in the modifier means to carry forward with the function after executin
 
 
 
-
-
-
+ 
