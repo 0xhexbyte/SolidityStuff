@@ -154,7 +154,7 @@ Another variable we only set one time is our `owner` variable. Variables that ar
 
 The reason that these keywords save gas is because instead of storing them in the storage slots, we save them directly in the bytecode of the contract.
 
-## Error
+## Advanced Solidity Custom Error:
 With Solidity 0.8 we can define custom errors and save gas with require statements.
 
         error NotOwner();
@@ -166,6 +166,8 @@ So the onlyOwner modifier becomes:
         }
 We can use the `revert()` function whenever and wherever it is required to revert the contract.
 
+
+## Advanced Solidity Receive & Callback
 
 
 
