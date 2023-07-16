@@ -169,19 +169,38 @@ We can use the `revert()` function whenever and wherever it is required to rever
 
 ## Advanced Solidity Receive & Callback
 
+A contract can have only one `receive()` function, declared like this:
+
+        receive() external payable {};
+*without the `function` keyword.
+*It cannot have any arguements.
+*It cannot return anything.
+*It must have `external` visibility.
+*It must be `payable`.
+
+A contract can have only one `fallback()` function, declared like this:
+
+        fallback() external payable{}
+*If a function call is made, but the function is not defined in the contract then it switches to `fallback()` function.
+
+The hierarchy goes like this:
+
+                    is msg.data empty?
+                        /    \
+                       yes    no
+                       /        \
+                receive()?        fallback()
+                    /  \
+                  yes   no
+                  /      \
+            receive()    fallback()
+
+--> If `msg.data` is not empty, then fallback() gets called.
+--> If `msg.data` is empty:
+    --> If `receive()` function exists, then `receive()` function gets called else,
+    --> `fallback()` function gets called.
+
+However, if `msg.data` is not empty and there is no `fallback()` function either then the contract will simply fail.
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
+--complete--
