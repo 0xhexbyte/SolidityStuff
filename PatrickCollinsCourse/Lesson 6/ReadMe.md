@@ -7,3 +7,4 @@ To compile a solidity file in foundry:
 ```
 forge compile
 ```
+This compiles the file and gives the output under a new directory named as ```out```.
