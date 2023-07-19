@@ -20,7 +20,19 @@ For any blockchain, the RPC URL is the actual HTTPs endpoint we interact with an
 
 However, a much-preferred choice is that of `Ganache`. 
 
-> However, if you do not wish to go through all the setup process. Download an run the `Ziion` OS in your virtualization software to find a pre-built environment.
+> However, if you do not wish to go through the setup process. Download and run the `Ziion` OS in your virtualization software to find a pre-built environment.
+
+## Deploying a contract
+We can use forge to deploy our contract:
+
+        forge create {ContractName} --rpc-url http://url.here:port --interactive --legacy
+        forge create SimpleStorage --rpc-url http://127.0.0.1:7545 --interactive --legacy
+The `--legacy` flag is used to bypass the EIP-1559 check. The `--interactive` flag is submitted so that we can submit the private key in the prompt, that wallet will be used to deploy the contract.
+
+If you are using `anvil` we can simply use:
+
+        forge create SimpleStorage --interactive
+This will work with `anvil` as it is default to foundry.
 
 
 
