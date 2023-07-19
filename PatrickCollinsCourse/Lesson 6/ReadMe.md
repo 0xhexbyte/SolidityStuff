@@ -34,9 +34,28 @@ If you are using `anvil` we can simply use:
         forge create SimpleStorage --interactive
 This will work with `anvil` as it is default to foundry.
 
+In the directory structure, the `lib/forge-std` directory stands for forge standard library which has a bunch of helpful scripts to work with foundry. To deploy as well we can do the following:
+
+        pragma solidity ^0.8.18;
+        import {Script} from "forge-std/Script.sol";
+        import {SimpleStorage} from "../src/SimpleStorage.sol";
+        contract DeploySimpleStorage is Script {
+            function run() external returns (SimpleStorage) {
+                vm.startBroadcast();
+                SimpleStorage simpleStorage = new SimpleStorage();
+                vm.stopBroadcast();
+                return simpleStorage;
+            }
+        }
 
 
+`vm` is a special keyword in the `forge-std` library and is available in foundry only.
+Any tx. we want to send needs to go between vm.startBroadcast() and vm.stopBroadcast().
+Deploying the contract can be done just by the code between the above-mentioned code lines.
 
+Now to run these script we use the command:
+
+        forge script script/DeploySimpleStorage.s.sol
 
 
 
