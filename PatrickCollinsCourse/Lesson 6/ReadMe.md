@@ -83,7 +83,9 @@ Now some extra pieces of tx. that we might find later are:
 
 > When deploying contracts with real money, we should always use a password-encrypted keystone (something like thirdweb) or use any alternative solution wherein you do not have to write your private key in plain text.
 
+## Interacting with Transactions
 
+Foundry has an in-built tool called `cast` which can be used to send transactions to the contracts deployed.
 
 
 
