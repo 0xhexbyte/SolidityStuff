@@ -102,7 +102,8 @@ This returns the hex value, so we can convert from hex to decimal:
     ❯ cast --to-base 0x000000000000000000000000000000000000000000000000000000000000007b dec
 
 
-
+# mempool
+Whenever we send a tx. to the blockchain it goes to `mempool` which is essentially a huge pool of upcoming transactions waiting to be approved, pooled/kept together - which btw, are publicly readable.
 
 
 
