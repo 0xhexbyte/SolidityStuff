@@ -87,6 +87,20 @@ Now some extra pieces of tx. that we might find later are:
 
 Foundry has an in-built tool called `cast` which can be used to send transactions to the contracts deployed.
 
+    cast send --help
+Requires 3 arguments: `to`, `signature`, and `argument` of the function call.
+
+    cast send 0x5FbDB2315678afecb367f032d93F642f64180aa3 "store(uint256)" 123 --rpc-url $RPC_URL --private-key $PRIVATE_KEY 
+The command takes the address of the deployed contract, in double brackets goes the function signature followed by the value for the function, followed by the RPC_URL and the private key for our wallet.
+
+Now, to read this value (getter function) we can use the `cast call` function:
+
+    ❯ cast call 0x5FbDB2315678afecb367f032d93F642f64180aa3 "retrieve()"
+    returns => ❯ 0x000000000000000000000000000000000000000000000000000000000000007b
+This returns the hex value, so we can convert from hex to decimal:
+
+    ❯ cast --to-base 0x000000000000000000000000000000000000000000000000000000000000007b dec
+
 
 
 
