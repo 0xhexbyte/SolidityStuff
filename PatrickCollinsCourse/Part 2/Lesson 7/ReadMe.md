@@ -6,7 +6,7 @@ So for example if we need a package such as : `@smartcontractkit/chainlink-brown
 ```
 forge install smartcontractkit/chainlink-brownie-contracts@0.6.1 --no-commit
 ```
-The version after the `@` sign specifies which version do we intend to install. Now in order to map the @chainlink/contracts to the installed library we will create a "remapping".
+The version after the `@` sign specifies which version do we intend to install. Now in order to map the `@chainlink/contracts` to the installed library we will create a "remapping".
 To do so, we will open the foundry.toml file and put an entry as such:
 ```
 [profile.default]
@@ -19,4 +19,5 @@ remappings = ["@chainlink/contracts/=lib/chainlink-brownie-contracts/contracts"]
 ```
 error FundMe__NotOwner();
 ```
- 
+
+##Tests
