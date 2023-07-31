@@ -21,3 +21,28 @@ error FundMe__NotOwner();
 ```
 
 ## Tests
+Not writing tests is considered equal to not writing mature code and not having a good understanding of how to audit so writing tests and reading them is a crucial skill.
+The first part of our test is the setUp() function:
+```
+contract FundMeTest is Test {
+    function setUp() external {}
+
+    function testDemo() public {}
+}
+```
+
+When the tests are run using `forge test`, the gas used is shown for `testDemo()` function, however the `setUp()` function is run first and a good way to demonstrate that is the following test code:
+```
+contract FundMeTest is Test {
+    uint256 number = 1;
+
+    function setUp() external {
+        number = 2;
+    }
+
+    function testDemo() public {
+        assertEq(number, 2);
+    }
+```
+
+## Debugging Tests
