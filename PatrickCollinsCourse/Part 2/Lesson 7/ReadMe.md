@@ -46,3 +46,32 @@ contract FundMeTest is Test {
 ```
 
 ## Debugging Tests
+
+Sometimes our tests might fail, in these circumstances, we can use the `console` library defined in the `forge-std/src/Test.sol` too.
+```
+//SPDX-License-Idnetifier: MIT
+
+pragma solidity ^0.8.18;
+
+import {Test, console} from "../lib/forge-std/src/Test.sol";
+import {FundMe} from "../src/FundMe.sol";
+
+contract FundMeTest is Test {
+    FundMe fundme;
+
+    function setUp() external {
+        fundme = new FundMe(0x694AA1769357215DE4FAC081bf1f309aDC325306);
+    }
+
+    function testMinDollarIsFive() public {
+        assertEq(fundme.MINIMUM_USD(), 5e18);
+    }
+
+    function testOwnerIsMsgSender() public {
+        console.log(i_owner);
+        console.log(msg.sender);
+        assertEq(fundme.getOwner(), address(this));
+    }
+}
+
+```
