@@ -96,3 +96,79 @@ contract DeployFundMe is Script {
 ```
 
 ## Forked Tests
+
+When we run a `forge test` and don't give it a RPC URL, foundry spins up a local blockchain using anvil, attempts to run the tests and shuts it down after execution.
+There are 4 different type of tests:
+1. Unit - To test a specific part of the code
+2. Integration - Testing how our code works with other parts of the code
+3. Forked - Testing our code on a simulated real environment
+4. Testing - Testing our code in a real environment that is not prod
+
+There is another forge command to find out the amount of code that is being covered in our tests and that is:
+```
+forge coverage --rpc-url $SEPOLIA_RPC_URL
+```
+This command shows how much code is covered from all of our code files in our test cases.
+
+## Refactoring: Testing Deploy Scripts
+We can't have hardcoded addresses in our contract as that might create lot of extra work if when in future we need to change the address or for the matter, any hardcoded value.
+FundMeTest.t.sol:
+```
+//SPDX-License-Idnetifier: MIT
+
+pragma solidity ^0.8.18;
+
+import {Test, console} from "../lib/forge-std/src/Test.sol";
+import {FundMe} from "../src/FundMe.sol";
+import {DeployFundMe} from "../script/DeployFundMe.s.sol";
+
+contract FundMeTest is Test {
+    FundMe fundMe;
+
+    function setUp() external {
+        // fundme = new FundMe(0x694AA1769357215DE4FAC081bf1f309aDC325306);
+        DeployFundMe deployFundMe = new DeployFundMe();
+        fundMe = deployFundMe.run();
+    }
+
+    function testMinDollarIsFive() public {
+        assertEq(fundMe.MINIMUM_USD(), 5e18);
+    }
+
+    function testOwnerIsMessageSender() public {
+        assertEq(fundMe.getOwner(), msg.sender);
+    }
+
+    function testPVVersion() public {
+        uint256 version = fundMe.getVersion();
+        assertEq(version, 4);
+    }
+}
+```
+
+DeployFundMe.s.sol:
+```
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.13;
+
+import {Script} from "../lib/forge-std/src/Script.sol";
+import {FundMe} from "../src/FundMe.sol";
+
+contract DeployFundMe is Script {
+    function run() external returns (FundMe) {
+        vm.startBroadcast();
+        FundMe fundMe = new FundMe(0x694AA1769357215DE4FAC081bf1f309aDC325306);
+        vm.stopBroadcast();
+        return fundMe;
+    }
+}
+
+//forge script script/DeployFundMe.s.sol --rpc-url http://127.0.0.1:8545
+```
+
+When we use DeployFundMe to initiate the FundMe contract, the `vm.startBroadcast()` makes the funder = `msg.sender`.
+
+
+## Refactoring Helper Config:
+We still do pass the sepoliad price feed address, in order to replicate this locally we need to create a `Mock` contract. We can deploy a price feed locally on `anvil` and interact with it for our tests.
+
