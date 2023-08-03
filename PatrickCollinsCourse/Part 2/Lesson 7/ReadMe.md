@@ -379,3 +379,25 @@ function getAnvilEthConfig() public returns (NetworkConfig memory) {
         return anvilConfig;
     }
 ```
+In the code above, if we already have an instance deployed then we wouldn't want to deploy another one for which, we will make use of 0 address and write the following check:
+```
+function getAnvilEthConfig() public returns (NetworkConfig memory) {
+        if (activeNetworkConfig.priceFeed != address(0)) {
+            return activeNetworkConfig;
+        }
+        vm.startBroadcast();
+        MockV3Aggregator mockPriceFeed = new MockV3Aggregator(
+            DECIMALS,
+            INITIAL_PRICE
+        );
+        vm.stopBroadcast();
+
+        NetworkConfig memory anvilConfig = NetworkConfig({
+            priceFeed: address(mockPriceFeed)
+        });
+        return anvilConfig;
+    }
+
+```
+Now if we already ran this function once then the address `priceFeed` won't be zero which will return a `true` boolean for our if confition and return the active running address.
+
