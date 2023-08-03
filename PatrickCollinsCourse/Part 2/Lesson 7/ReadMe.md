@@ -222,4 +222,160 @@ contract HelperConfig {
 This way if we intend to make any other getter function for a different chain, we can simply replicate the function and create another `else if` case in the `constructor()`.
 
 ## Refactoring Mocks
-For mock, or anvil blockchain - those live contracts do not exist as they do on other chains which is where we need to deploy those contracts here ourselves.
+For mock, or anvil blockchain - those live contracts do not exist as they do on other chains which is where we need to deploy those contracts here ourselves. Since we deploy these contracts by ourselves for anvil, we will need to make the HelperConfig `is Script` so as to access the `vm` keyword.
+
+In order to deploy our own price feed, we need a price feed contract as such:
+```
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+/**
+ * @title MockV3Aggregator
+ * @notice Based on the FluxAggregator contract
+ * @notice Use this contract when you need to test
+ * other contract's ability to read data from an
+ * aggregator contract, but how the aggregator got
+ * its answer is unimportant
+ */
+contract MockV3Aggregator {
+    uint256 public constant version = 4;
+
+    uint8 public decimals;
+    int256 public latestAnswer;
+    uint256 public latestTimestamp;
+    uint256 public latestRound;
+
+    mapping(uint256 => int256) public getAnswer;
+    mapping(uint256 => uint256) public getTimestamp;
+    mapping(uint256 => uint256) private getStartedAt;
+
+    constructor(uint8 _decimals, int256 _initialAnswer) {
+        decimals = _decimals;
+        updateAnswer(_initialAnswer);
+    }
+
+    function updateAnswer(int256 _answer) public {
+        latestAnswer = _answer;
+        latestTimestamp = block.timestamp;
+        latestRound++;
+        getAnswer[latestRound] = _answer;
+        getTimestamp[latestRound] = block.timestamp;
+        getStartedAt[latestRound] = block.timestamp;
+    }
+
+    function updateRoundData(
+        uint80 _roundId,
+        int256 _answer,
+        uint256 _timestamp,
+        uint256 _startedAt
+    ) public {
+        latestRound = _roundId;
+        latestAnswer = _answer;
+        latestTimestamp = _timestamp;
+        getAnswer[latestRound] = _answer;
+        getTimestamp[latestRound] = _timestamp;
+        getStartedAt[latestRound] = _startedAt;
+    }
+
+    function getRoundData(
+        uint80 _roundId
+    )
+        external
+        view
+        returns (
+            uint80 roundId,
+            int256 answer,
+            uint256 startedAt,
+            uint256 updatedAt,
+            uint80 answeredInRound
+        )
+    {
+        return (
+            _roundId,
+            getAnswer[_roundId],
+            getStartedAt[_roundId],
+            getTimestamp[_roundId],
+            _roundId
+        );
+    }
+
+    function latestRoundData()
+        external
+        view
+        returns (
+            uint80 roundId,
+            int256 answer,
+            uint256 startedAt,
+            uint256 updatedAt,
+            uint80 answeredInRound
+        )
+    {
+        return (
+            uint80(latestRound),
+            getAnswer[latestRound],
+            getStartedAt[latestRound],
+            getTimestamp[latestRound],
+            uint80(latestRound)
+        );
+    }
+
+    function description() external pure returns (string memory) {
+        return "v0.6/tests/MockV3Aggregator.sol";
+    }
+}
+```
+
+Integrating this with our HelperConfig:getAnvilEthConfig() function:
+```
+function getAnvilEthConfig() public returns (NetworkConfig memory) {
+        // deploy the mock
+        // return the mock
+        vm.startBroadcast();
+        MockV3Aggregator mockPriceFeed = new MockV3Aggregator(9, 2000e8);
+        vm.stopBroadcast();
+
+        NetworkConfig memory anvilConfig = NetworkConfig({
+            priceFeed: address(mockPriceFeed)
+        });
+        return anvilConfig;
+    }
+```
+
+## Magic Numbers
+Instead of having random numbers harcoded in our code like we did above with the mockPriceFeed instance we should initialize them as constants and then use those constants in the functions to improve readability.
+For example, rather than:
+```
+function getAnvilEthConfig() public returns (NetworkConfig memory) {
+        // deploy the mock
+        // return the mock
+        vm.startBroadcast();
+        MockV3Aggregator mockPriceFeed = new MockV3Aggregator(8,2000e8);
+        vm.stopBroadcast();
+
+        NetworkConfig memory anvilConfig = NetworkConfig({
+            priceFeed: address(mockPriceFeed)
+        });
+        return anvilConfig;
+    }
+```
+We can refactor it as:
+```
+uint8 public constant DECIMALS = 8;
+int256 public constant INITIAL_PRICE = 2000e8;
+
+function getAnvilEthConfig() public returns (NetworkConfig memory) {
+        // deploy the mock
+        // return the mock
+        vm.startBroadcast();
+        MockV3Aggregator mockPriceFeed = new MockV3Aggregator(
+            DECIMALS,
+            INITIAL_PRICE
+        );
+        vm.stopBroadcast();
+
+        NetworkConfig memory anvilConfig = NetworkConfig({
+            priceFeed: address(mockPriceFeed)
+        });
+        return anvilConfig;
+    }
+```
