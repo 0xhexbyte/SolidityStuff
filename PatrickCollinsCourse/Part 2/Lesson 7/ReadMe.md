@@ -222,3 +222,4 @@ contract HelperConfig {
 This way if we intend to make any other getter function for a different chain, we can simply replicate the function and create another `else if` case in the `constructor()`.
 
 ## Refactoring Mocks
+For mock, or anvil blockchain - those live contracts do not exist as they do on other chains which is where we need to deploy those contracts here ourselves.
