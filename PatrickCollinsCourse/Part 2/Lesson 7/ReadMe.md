@@ -399,5 +399,10 @@ function getAnvilEthConfig() public returns (NetworkConfig memory) {
     }
 
 ```
-Now if we already ran this function once then the address `priceFeed` won't be zero which will return a `true` boolean for our if confition and return the active running address.
+Now if we already ran this function once then the address `priceFeed` won't be zero which will return a `true` boolean for our if confition and return the active running address. 
+
+By practice we would like to default all variables to `private` as they are gas efficient.
+
+The `prank()` cheatcode sets the msg.sender to a specific address for the next call. 
+Another cheatcode `makeAddr()`, creates an address derived from the provided `name` as a parameter.
 
