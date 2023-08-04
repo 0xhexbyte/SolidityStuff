@@ -406,3 +406,63 @@ By practice we would like to default all variables to `private` as they are gas 
 The `prank()` cheatcode sets the msg.sender to a specific address for the next call. <br/>
 Another cheatcode `makeAddr()`, creates an address derived from the provided `name` as a parameter.
 
+The following is a good example of using `prank`:
+```
+ function testFundUpdatesFundedDataStructure() public {
+        vm.prank(testAddr); //The next tx will be sent by user
+        fundMe.fund{value: SEND_VALUE}();
+        uint256 amountFunded = fundMe.getAddressToAmountFunded(testAddr); //now we removed the address(this) to testAddr because of prank()
+        assertEq(amountFunded, SEND_VALUE);
+    }
+```
+The above example will give us an error and the reason for that is because we did create a new user with `prank()` but the user does not have any funds. So we can use another cheatcode called:<br/>
+`deal()` , allows us to set the balance for a new address.
+```
+ function setUp() external {
+        DeployFundMe deployer = new DeployFundMe();
+        (fundMe, helperConfig) = deployer.run();
+        vm.deal(USER, STARTING_USER_BALANCE);
+    }
+```
+
+However, hoax() allows us to do both of these at once:
+```
+function testWithDrawFromMultipleFunders() public funded {
+        uint160 numberOfFunders = 10;
+        uint160 startingFunderIndex = 2;
+        for (
+            uint160 i = startingFunderIndex;
+            i < numberOfFunders + startingFunderIndex;
+            i++
+        ) {
+            // we get hoax from stdcheats
+            // prank + deal
+            hoax(address(i), STARTING_USER_BALANCE);
+            fundMe.fund{value: SEND_VALUE}();
+        }
+
+        uint256 startingFundMeBalance = address(fundMe).balance;
+        uint256 startingOwnerBalance = fundMe.getOwner().balance;
+
+        vm.startPrank(fundMe.getOwner());
+        fundMe.withdraw();
+        vm.stopPrank();
+
+        assert(address(fundMe).balance == 0);
+        assert(
+            startingFundMeBalance + startingOwnerBalance ==
+                fundMe.getOwner().balance
+        );
+        assert(
+            (numberOfFunders + 1) * SEND_VALUE ==
+                fundMe.getOwner().balance - startingOwnerBalance
+        );
+    }
+```
+## Chisel
+Chisel provides us with an interactive terminal and allows us to run solidity command line by line.
+
+## Storage
+Storage works as a giant list associated with the contract where every single variable and every single value in the storage section is stored in a 32 byte slot, in the storage array. <br/>
+Similarly the next variable will go onto the second index position which is [1].
+![image](https://github.com/Mrig26/SolidityStuff/assets/36241150/e521ff49-6dc4-443d-ae1f-3c0eb170d544)
