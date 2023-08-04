@@ -403,6 +403,6 @@ Now if we already ran this function once then the address `priceFeed` won't be z
 
 By practice we would like to default all variables to `private` as they are gas efficient.
 
-The `prank()` cheatcode sets the msg.sender to a specific address for the next call. 
+The `prank()` cheatcode sets the msg.sender to a specific address for the next call. <br/>
 Another cheatcode `makeAddr()`, creates an address derived from the provided `name` as a parameter.
 
