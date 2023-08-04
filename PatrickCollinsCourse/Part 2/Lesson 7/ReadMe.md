@@ -464,5 +464,19 @@ Chisel provides us with an interactive terminal and allows us to run solidity co
 
 ## Storage
 Storage works as a giant list associated with the contract where every single variable and every single value in the storage section is stored in a 32 byte slot, in the storage array. <br/>
-Similarly the next variable will go onto the second index position which is [1].
-![image](https://github.com/Mrig26/SolidityStuff/assets/36241150/e521ff49-6dc4-443d-ae1f-3c0eb170d544)
+Similarly, the next variable will go onto the second index position which is [1].
+
+![image](https://github.com/Mrig26/SolidityStuff/assets/36241150/b61da961-1af9-485c-b4fe-5408fdf3c71d)
+
+
+All these values get modified into their hex versions to get stored in the storage array.<br/>
+
+For any variable or mapping which is dynamic, the elements inside the array are stored using some hashing function.
+![image](https://github.com/Mrig26/SolidityStuff/assets/36241150/0b08dbcb-9733-43bf-a1cb-e97172087528)
+
+Interestingly, `constant` and `immutable` variables do not take up storage slots and the reason is that they are a part of the bytecode. <br/>
+Any variables inside a function call are only there for the duration of execution, they do not persist. So such variables do not get added to the storage array. They get added in their own memory data structure which gets deleted after the function execution.<br/>
+
+Now coming to `memory`, we also refer as string memory and we do so because a string is a dynamically sized array. We need to tell solidity if we will store it in a storage location or memory location where we wipe it. Arrays and Mappings can take up a lot more space so solidity wants to know where are we working with this.
+
+Another useful command is `forge inspect` to see the storage structure of the contract. 
